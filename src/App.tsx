@@ -9,6 +9,7 @@ import History from "./components/History";
 
 function App() {
   const [selectedConeId, setSelectedConeId] = useState<string>("");
+
   const [orders, setOrders] = useState<OrdersState>({
     cone_A: ["brown", "blue"],
     cone_B: ["green", "pink"],
