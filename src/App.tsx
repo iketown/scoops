@@ -8,7 +8,9 @@ import { HomeGrid } from "utils/HomeGrid";
 import ConeDisplay from "./components/ConeDisplay";
 import History from "./components/History";
 import { gameReducer } from "redux/gameReducer";
+import { conesReducer } from "redux/conesReducer";
 import { incrementCones, addTip } from "redux/gameActions";
+
 function App() {
   const [selectedConeId, setSelectedConeId] = useState<string>("");
 
@@ -21,6 +23,9 @@ function App() {
   const [cones, setCones] = useState<ConesState>({
     cone_B: ["green__123"],
   });
+  const [newCones, conesDispatch] = useReducer(conesReducer, {
+    cone_B: ["green__123"],
+  });
 
   const [gameState, dispatch] = useReducer(gameReducer, {
     tips: 0,
@@ -29,30 +34,45 @@ function App() {
 
   const handleAddScoop = useCallback(
     (flavor: Flavor) => {
-      console.log("adding", flavor);
       if (!selectedConeId) return;
       const id = nanoid(5);
       const flavorId = `${flavor}__${id}`;
-      // add flavorId to selected cone
-      const oldCone = cones[selectedConeId] || [];
-      const newCones = { ...cones, [selectedConeId]: [...oldCone, flavorId] };
-      setCones(newCones);
+      const action = {
+        type: "ADD_SCOOP",
+        payload: {
+          flavorId,
+          coneId: selectedConeId,
+        },
+      };
+      conesDispatch(action);
     },
-    [cones, selectedConeId]
+    [selectedConeId]
   );
 
   function handleSelectCone(coneId: string) {
     setSelectedConeId(coneId);
   }
   function handleRemoveScoop(coneId: string, index: number) {
+    const action = {
+      type: "REMOVE_SCOOP",
+      payload: {
+        coneId,
+        index,
+      },
+    };
+    conesDispatch(action);
     const oldCone = cones[coneId] || [];
     const newCone = [...oldCone.slice(0, index), ...oldCone.slice(index + 1)];
     setCones((oldCones) => ({ ...oldCones, [coneId]: newCone }));
   }
   function handleRemoveCone(coneId: string) {
-    const newCones = { ...cones };
-    delete newCones[coneId];
-    setCones(newCones);
+    const action = {
+      type: "REMOVE_CONE",
+      payload: {
+        coneId,
+      },
+    };
+    conesDispatch(action);
 
     const newOrders = { ...orders };
     delete newOrders[coneId];
@@ -60,6 +80,13 @@ function App() {
   }
   function handleAddCone() {
     const coneId = `cone__${nanoid(5)}`;
+    const action = {
+      type: "ADD_CONE",
+      payload: {
+        coneId,
+      },
+    };
+    conesDispatch(action);
     const newOrder = getRandomOrder();
     setOrders((old) => ({ ...old, [coneId]: newOrder }));
   }
@@ -91,7 +118,7 @@ function App() {
                 key={coneId}
                 coneId={coneId}
                 selected={isSelected}
-                scoops={cones[coneId]}
+                scoops={newCones[coneId]}
                 order={orders[coneId]}
                 onClickCone={() => handleSelectCone(coneId)}
                 onClickScoop={(index) => handleRemoveScoop(coneId, index)}
