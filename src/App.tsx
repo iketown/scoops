@@ -7,6 +7,7 @@ import { HomeGrid } from "utils/HomeGrid";
 
 import ConeDisplay from "./components/ConeDisplay";
 import History from "./components/History";
+import { gameReducer } from "redux/gameReducer";
 
 function App() {
   const [selectedConeId, setSelectedConeId] = useState<string>("");
@@ -21,8 +22,10 @@ function App() {
     cone_B: ["green__123"],
   });
 
-  const [tips, setTips] = useState<number>(0);
-  const [finishedCones, setFinishedCones] = useState<number>(0);
+  const [gameState, setGameState] = useState({
+    tips: 0,
+    finishedCones: 0,
+  });
 
   const handleAddScoop = useCallback(
     (flavor: Flavor) => {
@@ -62,13 +65,22 @@ function App() {
   }
 
   function handleAddToHistory(tip: number) {
-    setTips((oldTips) => oldTips + tip);
+    const coneAction = {
+      type: "INCREMENT_CONES",
+    };
+    setGameState((oldState) => gameReducer(oldState, coneAction));
+    const tipAction = {
+      type: "ADD_TIP",
+      payload: {
+        tip,
+      },
+    };
+    setGameState((oldState) => gameReducer(oldState, tipAction));
   }
 
   function handleFinishCone(coneId: string, tip: number) {
     handleAddToHistory(tip);
     handleRemoveCone(coneId);
-    setFinishedCones((old) => old + 1);
     // this may become part of the game mechanics later
     // adding more cones as score gets higher, etc.
     // for now we'll just add one every time you remove one.
@@ -98,7 +110,7 @@ function App() {
       </HomeGrid>
 
       <Buckets onAddScoop={handleAddScoop} />
-      <History {...{ tips, finishedCones }} />
+      <History {...gameState} />
     </div>
   );
 }
