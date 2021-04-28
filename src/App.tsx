@@ -20,9 +20,6 @@ function App() {
     cone_C: ["blue", "white"],
   });
 
-  const [cones, setCones] = useState<ConesState>({
-    cone_B: ["green__123"],
-  });
   const [newCones, conesDispatch] = useReducer(conesReducer, {
     cone_B: ["green__123"],
   });
@@ -61,9 +58,6 @@ function App() {
       },
     };
     conesDispatch(action);
-    const oldCone = cones[coneId] || [];
-    const newCone = [...oldCone.slice(0, index), ...oldCone.slice(index + 1)];
-    setCones((oldCones) => ({ ...oldCones, [coneId]: newCone }));
   }
   function handleRemoveCone(coneId: string) {
     const action = {
