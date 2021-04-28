@@ -1,14 +1,14 @@
 import Buckets from "components/Buckets";
 import { AnimatePresence } from "framer-motion";
 import { nanoid } from "nanoid";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useReducer } from "react";
 import { getRandomOrder } from "utils/randomOrder";
 import { HomeGrid } from "utils/HomeGrid";
 
 import ConeDisplay from "./components/ConeDisplay";
 import History from "./components/History";
 import { gameReducer } from "redux/gameReducer";
-
+import { incrementCones, addTip } from "redux/gameActions";
 function App() {
   const [selectedConeId, setSelectedConeId] = useState<string>("");
 
@@ -22,7 +22,7 @@ function App() {
     cone_B: ["green__123"],
   });
 
-  const [gameState, setGameState] = useState({
+  const [gameState, dispatch] = useReducer(gameReducer, {
     tips: 0,
     finishedCones: 0,
   });
@@ -65,17 +65,10 @@ function App() {
   }
 
   function handleAddToHistory(tip: number) {
-    const coneAction = {
-      type: "INCREMENT_CONES",
-    };
-    setGameState((oldState) => gameReducer(oldState, coneAction));
-    const tipAction = {
-      type: "ADD_TIP",
-      payload: {
-        tip,
-      },
-    };
-    setGameState((oldState) => gameReducer(oldState, tipAction));
+    const coneAction = incrementCones();
+    dispatch(coneAction);
+    const tipAction = addTip(tip);
+    dispatch(tipAction);
   }
 
   function handleFinishCone(coneId: string, tip: number) {
