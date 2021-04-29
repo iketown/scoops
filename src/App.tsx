@@ -9,19 +9,19 @@ import ConeDisplay from "./components/ConeDisplay";
 import History from "./components/History";
 import { gameReducer } from "redux/gameReducer";
 import { conesReducer } from "redux/conesReducer";
+import { ordersReducer } from "redux/ordersReducer";
 import { incrementCones, addTip } from "redux/gameActions";
 
 function App() {
   const [selectedConeId, setSelectedConeId] = useState<string>("");
 
-  const [orders, setOrders] = useState<OrdersState>({
+  const [cones, conesDispatch] = useReducer(conesReducer, {
+    cone_B: ["green__123"],
+  });
+  const [orders, ordersDispatch] = useReducer(ordersReducer, {
     cone_A: ["brown", "blue"],
     cone_B: ["green", "pink"],
     cone_C: ["blue", "white"],
-  });
-
-  const [newCones, conesDispatch] = useReducer(conesReducer, {
-    cone_B: ["green__123"],
   });
 
   const [gameState, dispatch] = useReducer(gameReducer, {
@@ -67,22 +67,20 @@ function App() {
       },
     };
     conesDispatch(action);
-
-    const newOrders = { ...orders };
-    delete newOrders[coneId];
-    setOrders(newOrders);
+    ordersDispatch(action);
   }
   function handleAddCone() {
     const coneId = `cone__${nanoid(5)}`;
+    const newOrder = getRandomOrder();
     const action = {
       type: "ADD_CONE",
       payload: {
         coneId,
+        newOrder,
       },
     };
     conesDispatch(action);
-    const newOrder = getRandomOrder();
-    setOrders((old) => ({ ...old, [coneId]: newOrder }));
+    ordersDispatch(action);
   }
 
   function handleAddToHistory(tip: number) {
@@ -112,7 +110,7 @@ function App() {
                 key={coneId}
                 coneId={coneId}
                 selected={isSelected}
-                scoops={newCones[coneId]}
+                scoops={cones[coneId]}
                 order={orders[coneId]}
                 onClickCone={() => handleSelectCone(coneId)}
                 onClickScoop={(index) => handleRemoveScoop(coneId, index)}
