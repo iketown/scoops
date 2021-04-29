@@ -3,6 +3,8 @@ import { AnimatePresence } from "framer-motion";
 import { useCallback, useState, useReducer } from "react";
 import { HomeGrid } from "utils/HomeGrid";
 
+import { useAppDispatch, useAppSelector } from "redux/hooks";
+
 import ConeDisplay from "./components/ConeDisplay";
 import History from "./components/History";
 import { gameReducer } from "redux/gameReducer";
@@ -18,6 +20,9 @@ import {
 } from "redux/gameActions";
 
 function App() {
+  const dispatch = useAppDispatch();
+  const gameState = useAppSelector(({ game }) => game);
+
   const [selectedConeId, setSelectedConeId] = useState<string>("");
 
   const [cones, conesDispatch] = useReducer(conesReducer, {
@@ -29,10 +34,10 @@ function App() {
     cone_C: ["blue", "white"],
   });
 
-  const [gameState, dispatch] = useReducer(gameReducer, {
-    tips: 0,
-    finishedCones: 0,
-  });
+  // const [gameState, dispatch] = useReducer(gameReducer, {
+  //   tips: 0,
+  //   finishedCones: 0,
+  // });
 
   const handleAddScoop = useCallback(
     (flavor: Flavor) => {
