@@ -1,4 +1,9 @@
-export const conesReducer = (state: ConesState, action: any) => {
+export const conesReducer = (
+  state: ConesState = {
+    cone_B: ["green__123"],
+  },
+  action: any
+) => {
   switch (action.type) {
     case "ADD_SCOOP": {
       const { flavorId, coneId } = action.payload;
