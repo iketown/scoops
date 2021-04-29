@@ -1,8 +1,6 @@
 import Buckets from "components/Buckets";
 import { AnimatePresence } from "framer-motion";
-import { nanoid } from "nanoid";
 import { useCallback, useState, useReducer } from "react";
-import { getRandomOrder } from "utils/randomOrder";
 import { HomeGrid } from "utils/HomeGrid";
 
 import ConeDisplay from "./components/ConeDisplay";
@@ -10,7 +8,14 @@ import History from "./components/History";
 import { gameReducer } from "redux/gameReducer";
 import { conesReducer } from "redux/conesReducer";
 import { ordersReducer } from "redux/ordersReducer";
-import { incrementCones, addTip } from "redux/gameActions";
+import {
+  incrementCones,
+  addTip,
+  removeScoop,
+  removeCone,
+  addScoop,
+  addCone,
+} from "redux/gameActions";
 
 function App() {
   const [selectedConeId, setSelectedConeId] = useState<string>("");
@@ -32,15 +37,7 @@ function App() {
   const handleAddScoop = useCallback(
     (flavor: Flavor) => {
       if (!selectedConeId) return;
-      const id = nanoid(5);
-      const flavorId = `${flavor}__${id}`;
-      const action = {
-        type: "ADD_SCOOP",
-        payload: {
-          flavorId,
-          coneId: selectedConeId,
-        },
-      };
+      const action = addScoop({ flavor, coneId: selectedConeId });
       conesDispatch(action);
     },
     [selectedConeId]
@@ -50,35 +47,16 @@ function App() {
     setSelectedConeId(coneId);
   }
   function handleRemoveScoop(coneId: string, index: number) {
-    const action = {
-      type: "REMOVE_SCOOP",
-      payload: {
-        coneId,
-        index,
-      },
-    };
+    const action = removeScoop({ coneId, index });
     conesDispatch(action);
   }
   function handleRemoveCone(coneId: string) {
-    const action = {
-      type: "REMOVE_CONE",
-      payload: {
-        coneId,
-      },
-    };
+    const action = removeCone(coneId);
     conesDispatch(action);
     ordersDispatch(action);
   }
   function handleAddCone() {
-    const coneId = `cone__${nanoid(5)}`;
-    const newOrder = getRandomOrder();
-    const action = {
-      type: "ADD_CONE",
-      payload: {
-        coneId,
-        newOrder,
-      },
-    };
+    const action = addCone();
     conesDispatch(action);
     ordersDispatch(action);
   }
