@@ -1,51 +1,34 @@
 import Buckets from "components/Buckets";
 import { AnimatePresence } from "framer-motion";
-import { useCallback, useState, useReducer } from "react";
-import { HomeGrid } from "utils/HomeGrid";
-
+import { useCallback, useState } from "react";
+import {
+  addCone,
+  addScoop,
+  addTip,
+  incrementCones,
+  removeCone,
+  removeScoop,
+} from "redux/gameActions";
 import { useAppDispatch, useAppSelector } from "redux/hooks";
+import { HomeGrid } from "utils/HomeGrid";
 
 import ConeDisplay from "./components/ConeDisplay";
 import History from "./components/History";
-import { gameReducer } from "redux/gameReducer";
-import { conesReducer } from "redux/conesReducer";
-import { ordersReducer } from "redux/ordersReducer";
-import {
-  incrementCones,
-  addTip,
-  removeScoop,
-  removeCone,
-  addScoop,
-  addCone,
-} from "redux/gameActions";
 
 function App() {
   const dispatch = useAppDispatch();
   const gameState = useAppSelector(({ game }) => game);
-
+  const cones = useAppSelector(({ cones }) => cones);
+  const orders = useAppSelector(({ orders }) => orders);
   const [selectedConeId, setSelectedConeId] = useState<string>("");
-
-  const [cones, conesDispatch] = useReducer(conesReducer, {
-    cone_B: ["green__123"],
-  });
-  const [orders, ordersDispatch] = useReducer(ordersReducer, {
-    cone_A: ["brown", "blue"],
-    cone_B: ["green", "pink"],
-    cone_C: ["blue", "white"],
-  });
-
-  // const [gameState, dispatch] = useReducer(gameReducer, {
-  //   tips: 0,
-  //   finishedCones: 0,
-  // });
 
   const handleAddScoop = useCallback(
     (flavor: Flavor) => {
       if (!selectedConeId) return;
       const action = addScoop({ flavor, coneId: selectedConeId });
-      conesDispatch(action);
+      dispatch(action);
     },
-    [selectedConeId]
+    [dispatch, selectedConeId]
   );
 
   function handleSelectCone(coneId: string) {
@@ -53,17 +36,15 @@ function App() {
   }
   function handleRemoveScoop(coneId: string, index: number) {
     const action = removeScoop({ coneId, index });
-    conesDispatch(action);
+    dispatch(action);
   }
   function handleRemoveCone(coneId: string) {
     const action = removeCone(coneId);
-    conesDispatch(action);
-    ordersDispatch(action);
+    dispatch(action);
   }
   function handleAddCone() {
     const action = addCone();
-    conesDispatch(action);
-    ordersDispatch(action);
+    dispatch(action);
   }
 
   function handleAddToHistory(tip: number) {
