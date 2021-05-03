@@ -1,6 +1,6 @@
 import { motion, Variants } from "framer-motion";
 import styled from "styled-components";
-
+import { useAppSelector } from "redux/hooks";
 const StyledHistoryDiv = styled.div`
   position: fixed;
   border: 3px solid pink;
@@ -23,11 +23,9 @@ const StyledHistoryDiv = styled.div`
   }
 `;
 
-interface HistoryI {
-  tips: number;
-  finishedCones: number;
-}
-const History: React.FC<HistoryI> = ({ tips, finishedCones }) => {
+const History: React.FC = () => {
+  const { tips, finishedCones } = useAppSelector(({ game }) => game);
+
   return (
     <StyledHistoryDiv>
       <div style={{ position: "relative" }}>

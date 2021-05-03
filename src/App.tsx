@@ -1,9 +1,7 @@
 import Buckets from "components/Buckets";
 import { AnimatePresence } from "framer-motion";
-import { useCallback, useState } from "react";
 import {
   addCone,
-  addScoop,
   addTip,
   incrementCones,
   removeCone,
@@ -17,22 +15,19 @@ import History from "./components/History";
 
 function App() {
   const dispatch = useAppDispatch();
-  const gameState = useAppSelector(({ game }) => game);
   const cones = useAppSelector(({ cones }) => cones);
   const orders = useAppSelector(({ orders }) => orders);
-  const [selectedConeId, setSelectedConeId] = useState<string>("");
-
-  const handleAddScoop = useCallback(
-    (flavor: Flavor) => {
-      if (!selectedConeId) return;
-      const action = addScoop({ flavor, coneId: selectedConeId });
-      dispatch(action);
-    },
-    [dispatch, selectedConeId]
-  );
+  const selectedConeId = useAppSelector(({ game }) => game.selectedConeId);
 
   function handleSelectCone(coneId: string) {
-    setSelectedConeId(coneId);
+    // setSelectedConeId(coneId);
+    const action = {
+      type: "SET_SELECTED_CONE",
+      payload: {
+        coneId,
+      },
+    };
+    dispatch(action);
   }
   function handleRemoveScoop(coneId: string, index: number) {
     const action = removeScoop({ coneId, index });
@@ -85,8 +80,8 @@ function App() {
         </AnimatePresence>
       </HomeGrid>
 
-      <Buckets onAddScoop={handleAddScoop} />
-      <History {...gameState} />
+      <Buckets />
+      <History />
     </div>
   );
 }

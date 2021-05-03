@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { colors } from "../constants/colors";
 import { motion } from "framer-motion";
+import { useAppSelector, useAppDispatch } from "redux/hooks";
+import { addScoop } from "redux/gameActions";
 
 const BucketsDiv = styled.div`
   display: flex;
@@ -10,11 +12,15 @@ const BucketsDiv = styled.div`
   max-width: 800px;
 `;
 
-interface BucketsI {
-  onAddScoop: (flavor: Flavor) => void;
-}
+export const Buckets: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const selectedConeId = useAppSelector(({ game }) => game.selectedConeId);
+  const handleAddScoop = (flavor: Flavor) => {
+    if (!selectedConeId) return;
+    const action = addScoop({ flavor, coneId: selectedConeId });
+    dispatch(action);
+  };
 
-export const Buckets: React.FC<BucketsI> = ({ onAddScoop }) => {
   return (
     <BucketsDiv>
       {Object.entries(colors).map(([flavor, color]) => {
@@ -27,7 +33,9 @@ export const Buckets: React.FC<BucketsI> = ({ onAddScoop }) => {
               idle: { scale: 0.95 },
             }}
             key={flavor}
-            onClick={() => onAddScoop(flavor as Flavor)}
+            onClick={() => {
+              handleAddScoop(flavor as Flavor);
+            }}
             style={{
               backgroundImage: `url(images/bucket_${flavor}.jpg)`,
               backgroundSize: "contain",
