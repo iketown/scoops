@@ -1,29 +1,23 @@
-interface GameState {
-  tips: number;
-  finishedCones: number;
-  selectedConeId: string;
-}
+import { incrementCones, addTip, setSelectedCone } from "redux/gameActions";
+import { createReducer } from "@reduxjs/toolkit";
 
-export const gameReducer = (
-  state: GameState = {
-    tips: 0,
-    finishedCones: 0,
-    selectedConeId: "",
-  },
-  action: any
-): GameState => {
-  if (action.type === "INCREMENT_CONES") {
-    const finishedCones = state.finishedCones + 1;
-    return { ...state, finishedCones };
-  }
-  if (action.type === "ADD_TIP") {
+const initialState = {
+  tips: 0,
+  finishedCones: 0,
+  selectedConeId: "",
+};
+
+export const gameReducer = createReducer(initialState, (builder) => {
+  builder.addCase(incrementCones, (state, action) => {
+    state.finishedCones++;
+  });
+  builder.addCase(addTip, (state, action) => {
     const { tip } = action.payload;
-    return { ...state, tips: state.tips + tip };
-  }
-  if (action.type === "SET_SELECTED_CONE") {
+    state.tips += tip;
+  });
+  builder.addCase(setSelectedCone, (state, action) => {
     const { coneId } = action.payload;
     if (!coneId) return state;
-    return { ...state, selectedConeId: coneId };
-  }
-  return state;
-};
+    state.selectedConeId = coneId;
+  });
+});
