@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { colors } from "../constants/colors";
 import { motion } from "framer-motion";
-import { useAppSelector, useAppDispatch, AppDispatch } from "redux/hooks";
+import { useAppDispatch, AppDispatch } from "redux/hooks";
 import { addScoop } from "redux/gameActions";
 import { memo } from "react";
 import { RootState } from "redux/store";
@@ -22,9 +22,7 @@ export const Buckets: React.FC = () => {
         game: { selectedConeId },
       } = getState();
       if (!selectedConeId) return;
-      await new Promise((resolve) => {
-        setTimeout(resolve, 1500);
-      });
+
       const action = addScoop({ flavor, coneId: selectedConeId });
       dispatch(action);
     };

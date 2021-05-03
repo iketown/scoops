@@ -1,19 +1,27 @@
 import { nanoid } from "nanoid";
 import { getRandomOrder } from "utils/randomOrder";
-export const incrementCones = () => {
-  return {
-    type: "INCREMENT_CONES",
-  };
-};
+import { createAction } from "@reduxjs/toolkit";
 
-export const addTip = (tip: number) => {
+export const incrementCones = createAction("INCREMENT_CONES");
+
+export const addTip = createAction("ADD_TIP", (tip: number) => {
   return {
-    type: "ADD_TIP",
     payload: {
       tip,
     },
   };
-};
+});
+
+export const setSelectedCone = createAction(
+  "SET_SELECTED_CONE",
+  (coneId: string) => {
+    return {
+      payload: {
+        coneId,
+      },
+    };
+  }
+);
 
 export const addScoop = ({
   flavor,

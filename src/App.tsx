@@ -6,6 +6,7 @@ import {
   incrementCones,
   removeCone,
   removeScoop,
+  setSelectedCone,
 } from "redux/gameActions";
 import { useAppDispatch, useAppSelector } from "redux/hooks";
 import { HomeGrid } from "utils/HomeGrid";
@@ -21,12 +22,7 @@ function App() {
 
   function handleSelectCone(coneId: string) {
     // setSelectedConeId(coneId);
-    const action = {
-      type: "SET_SELECTED_CONE",
-      payload: {
-        coneId,
-      },
-    };
+    const action = setSelectedCone(coneId);
     dispatch(action);
   }
   function handleRemoveScoop(coneId: string, index: number) {
