@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { colors } from "../constants/colors";
 import { motion } from "framer-motion";
-import { useAppSelector, useAppDispatch } from "redux/hooks";
+import { useAppSelector, useAppDispatch, AppDispatch } from "redux/hooks";
 import { addScoop } from "redux/gameActions";
-
+import { memo } from "react";
+import { RootState } from "redux/store";
 const BucketsDiv = styled.div`
   display: flex;
   justify-content: space-around;
@@ -14,11 +15,20 @@ const BucketsDiv = styled.div`
 
 export const Buckets: React.FC = () => {
   const dispatch = useAppDispatch();
-  const selectedConeId = useAppSelector(({ game }) => game.selectedConeId);
+
   const handleAddScoop = (flavor: Flavor) => {
-    if (!selectedConeId) return;
-    const action = addScoop({ flavor, coneId: selectedConeId });
-    dispatch(action);
+    const thunk = async (dispatch: AppDispatch, getState: () => RootState) => {
+      const {
+        game: { selectedConeId },
+      } = getState();
+      if (!selectedConeId) return;
+      await new Promise((resolve) => {
+        setTimeout(resolve, 1500);
+      });
+      const action = addScoop({ flavor, coneId: selectedConeId });
+      dispatch(action);
+    };
+    dispatch(thunk);
   };
 
   return (
@@ -52,4 +62,4 @@ export const Buckets: React.FC = () => {
   );
 };
 
-export default Buckets;
+export default memo(Buckets);
