@@ -1,77 +1,24 @@
 import Buckets from "components/Buckets";
 import { AnimatePresence } from "framer-motion";
-import {
-  addCone,
-  addTip,
-  incrementCones,
-  removeCone,
-  removeScoop,
-  setSelectedCone,
-} from "redux/gameActions";
-import { useAppDispatch, useAppSelector } from "redux/hooks";
+import { useAppSelector } from "redux/hooks";
 import { HomeGrid } from "utils/HomeGrid";
 
-import ConeDisplay from "./components/ConeDisplay";
+import ConeDisplayRx from "./components/ConeDisplayRX";
 import History from "./components/History";
+import isEqual from "lodash.isequal";
 
 function App() {
-  const dispatch = useAppDispatch();
-  const cones = useAppSelector(({ cones }) => cones);
-  const orders = useAppSelector(({ orders }) => orders);
-  const selectedConeId = useAppSelector(({ game }) => game.selectedConeId);
-
-  function handleSelectCone(coneId: string) {
-    // setSelectedConeId(coneId);
-    const action = setSelectedCone(coneId);
-    dispatch(action);
-  }
-  function handleRemoveScoop(coneId: string, index: number) {
-    const action = removeScoop({ coneId, index });
-    dispatch(action);
-  }
-  function handleRemoveCone(coneId: string) {
-    const action = removeCone(coneId);
-    dispatch(action);
-  }
-  function handleAddCone() {
-    const action = addCone();
-    dispatch(action);
-  }
-
-  function handleAddToHistory(tip: number) {
-    const coneAction = incrementCones();
-    dispatch(coneAction);
-    const tipAction = addTip(tip);
-    dispatch(tipAction);
-  }
-
-  function handleFinishCone(coneId: string, tip: number) {
-    handleAddToHistory(tip);
-    handleRemoveCone(coneId);
-    // this may become part of the game mechanics later
-    // adding more cones as score gets higher, etc.
-    // for now we'll just add one every time you remove one.
-    handleAddCone();
-  }
+  const orderKeys = useAppSelector(
+    ({ orders }) => Object.keys(orders),
+    isEqual
+  );
 
   return (
     <div onKeyPress={(hey) => console.log("hey", hey)}>
       <HomeGrid>
         <AnimatePresence>
-          {Object.keys(orders).map((coneId) => {
-            const isSelected = coneId === selectedConeId;
-            return (
-              <ConeDisplay
-                key={coneId}
-                coneId={coneId}
-                selected={isSelected}
-                scoops={cones[coneId]}
-                order={orders[coneId]}
-                onClickCone={() => handleSelectCone(coneId)}
-                onClickScoop={(index) => handleRemoveScoop(coneId, index)}
-                onDone={(tip: number) => handleFinishCone(coneId, tip)}
-              />
-            );
+          {orderKeys.map((coneId) => {
+            return <ConeDisplayRx key={coneId} coneId={coneId} />;
           })}
         </AnimatePresence>
       </HomeGrid>
