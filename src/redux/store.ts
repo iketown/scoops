@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { conesReducer } from "./conesReducer";
 import { gameReducer } from "./gameReducer";
-import { ordersReducer } from "./ordersReducer";
+import { ordersReducer } from "./ordersSlice";
 
 export const store = configureStore({
   reducer: {

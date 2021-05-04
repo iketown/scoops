@@ -1,8 +1,9 @@
 import { nanoid } from "nanoid";
-import { getRandomOrder } from "utils/randomOrder";
 import { createAction } from "@reduxjs/toolkit";
-
+import { ordersActions } from "./ordersSlice";
 export const incrementCones = createAction("INCREMENT_CONES");
+
+export const { addCone, removeCone } = ordersActions;
 
 export const addTip = createAction("ADD_TIP", (tip: number) => {
   return {
@@ -40,17 +41,18 @@ export const addScoop = ({
     },
   };
 };
-export const addCone = () => {
-  const coneId = `cone__${nanoid(5)}`;
-  const newOrder = getRandomOrder();
-  return {
-    type: "ADD_CONE",
-    payload: {
-      coneId,
-      newOrder,
-    },
-  };
-};
+
+// export const addCone = () => {
+//   const coneId = `cone__${nanoid(5)}`;
+//   const newOrder = getRandomOrder();
+//   return {
+//     type: "ADD_CONE",
+//     payload: {
+//       coneId,
+//       newOrder,
+//     },
+//   };
+// };
 
 export const removeScoop = ({
   coneId,
@@ -67,11 +69,11 @@ export const removeScoop = ({
     },
   };
 };
-export const removeCone = (coneId: string) => {
-  return {
-    type: "REMOVE_CONE",
-    payload: {
-      coneId,
-    },
-  };
-};
+// export const removeCone = (coneId: string) => {
+//   return {
+//     type: "REMOVE_CONE",
+//     payload: {
+//       coneId,
+//     },
+//   };
+// };
